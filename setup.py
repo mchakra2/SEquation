@@ -15,6 +15,7 @@ requirements = [
 ]
 
 test_requirements = [
+    'numpy'
     # TODO: put package test requirements here
 ]
 
