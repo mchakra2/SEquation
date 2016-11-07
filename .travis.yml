@@ -18,7 +18,7 @@ install:
 # command to run tests, e.g. python setup.py test
 script:
 - tox -e ${TOXENV}
-- coverage run --source=mcmc/mcmc.py setup.py test
+- coverage run --source=SEquation/SEquation.py setup.py test
 - coverage report -m
 # After you create the Github repo and add it to Travis, run the
 # travis_pypi_setup.py script to finish PyPI deployment setup
