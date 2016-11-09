@@ -10,6 +10,7 @@ Tests for `SEquation` module.
 
 
 import sys
+import os
 import unittest
 from contextlib import contextmanager
 from click.testing import CliRunner
@@ -22,7 +23,7 @@ from SEquation import cli
 class TestSequation(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.S=SEquation.Schrodinger()
 
     def tearDown(self):
         pass
@@ -38,3 +39,11 @@ class TestSequation(unittest.TestCase):
         help_result = runner.invoke(cli.main, ['--help'])
         assert help_result.exit_code == 0
         assert '--help  Show this message and exit.' in help_result.output
+
+    
+    def test_input_file_exists(self):
+           
+        #self.assertRaises(IOError,self.p.parameters,'random_file_which_should_not_exist.txt')#Checks if error is raised for invalid input file
+        self.assertTrue(os.path.exists(self.S.input_f))#Checks if the given input file exists
+        flag = os.path.getsize(self.S.input_f)
+        self.assertGreater(flag,0)
