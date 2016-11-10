@@ -7,6 +7,7 @@ class Schrodinger:
      input_f='./IOFiles/input.txt'#default input file location
      Pot_file='./IOFiles/Pot_Example.txt'
      c=1
+     period=2
      basis_size=14
      basis_set=4
      stat_potential=3#Since we were asked to treat potential as constant
@@ -49,3 +50,8 @@ class Schrodinger:
           new_coeff=np.append(new_coeff,[0,0])#Since taking n degree derivative reduces the number of coefficients by n
           new_coeff=(-self.c)*new_coeff+(self.stat_potential*self.coeff)
           return(new_coeff)
+
+     def f_coeffs(self,psi,x):
+          
+          c= y*np.exp(-1j*2*n*np.pi*x/self.period)
+          return c.sum()/c.size
