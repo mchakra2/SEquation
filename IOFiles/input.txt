@@ -1,1 +1,10 @@
-blah blah
+#Integer value c
+c=1
+#Basis set to use. 1 for Fourier and 2 for Legendre Polynomials
+basis_set=1
+#basis set size. It should be positive integer
+size=20
+#Path name for the potential energy file (Pot_file)
+Pot_file=./IOFiles/Pot_Example.txt
+#Preferred path name of the output file (o_file)
+o_file=./IOFiles/output.txt
