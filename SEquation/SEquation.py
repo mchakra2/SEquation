@@ -51,7 +51,7 @@ class Schrodinger:
           new_coeff=(-self.c)*new_coeff+(self.stat_potential*self.coeff)
           return(new_coeff)
 
-     def f_coeffs(self,psi,x):
+     def f_coeffs(self,psi,x,n):
           
-          c= y*np.exp(-1j*2*n*np.pi*x/self.period)
+          c= psi*np.exp(-1j*2*n*np.pi*x/self.period)
           return c.sum()/c.size

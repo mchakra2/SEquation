@@ -58,6 +58,12 @@ class TestSequation(unittest.TestCase):
         x=np.arange(-1,1,0.1)
         function=x
         self.S.legendre_coeffs(function,x)
+        '''
+        The basis set size for legendre polynomials indicates the degree of the legendre polynomial to be used as basis set.
+        Hence the total number of coefficients in the coefficient vector will be basis_set size+1 (e.g: basis set size=1 means 
+        Legendre polynomial of degree 0, which is just the constant 1. So, we will have single coefficient for the constant 1)
+        '''
+        self.assertEqual(self.S.basis_size+1,len(self.S.coeff))
         self.assertAlmostEqual(self.S.coeff[1],1,3)#The coefficient for the second term in Legendre polynomial should be 1
         for i in range(0,self.S.basis_size+1):
             if i!=1:
@@ -70,6 +76,7 @@ class TestSequation(unittest.TestCase):
         self.S.legendre_coeffs(function,x)
         #print(self.S.coeff)
         new_coeff=self.S.legendre_hamiltonian_coeffs(self.S.coeff)
+        self.assertEqual(self.S.basis_size+1,len(new_coeff))
         #Just to check, modifying coefficient according to the hamiltonian operation
         self.S.coeff[0]=self.S.stat_potential*self.S.coeff[0]+(-self.S.c*6)
         self.S.coeff[2]=self.S.stat_potential*self.S.coeff[2]
