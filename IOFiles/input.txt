@@ -1,6 +1,6 @@
 #Integer value c
 c=1
-#Basis set to use. 1 for Fourier and 2 for Legendre Polynomials
+#Basis set to use. 1 for Legendre Polynomials and 2 for Fourier 
 basis_set=1
 #basis set size. It should be positive integer
 size=20

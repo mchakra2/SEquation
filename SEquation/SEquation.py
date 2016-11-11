@@ -12,7 +12,12 @@ class Schrodinger:
      basis_set=4
      stat_potential=3#Since we were asked to treat potential as constant
      o_file="./IOFiles/output.txt"
-     
+     #Predefined function
+     function=staticmethod(lambda x: np.sin(x)+np.cos(x))
+     x_points=200#Number of x points spanning the period
+
+     def main():
+            self.parameters(self.input_f)
      
      #Reads the input file and assigns the parameter values
      def parameters(self,in_file):
@@ -45,9 +50,12 @@ class Schrodinger:
 
      #Takes in the legendre coefficient array and return the modified coefficient array after applying hamilton operator on it
      def legendre_hamiltonian_coeffs(self,coefficient_array):
+          ''' The polynomial.legendre.legder(c,m) function takes in the original set of coefficients of legendre polynomials of degree n
+          and returns the Legendre series coefficients c differentiated m'''
           new_coeff=np.polynomial.legendre.legder(coefficient_array,2)
           
           new_coeff=np.append(new_coeff,[0,0])#Since taking n degree derivative reduces the number of coefficients by n
+          #modifying to obtain final coefficients after hamiltonian operation
           new_coeff=(-self.c)*new_coeff+(self.stat_potential*self.coeff)
           return(new_coeff)
 
@@ -55,3 +63,22 @@ class Schrodinger:
           
           c= psi*np.exp(-1j*2*n*np.pi*x/self.period)
           return c.sum()/c.size
+
+     def coefficient_calculator_selection(self):
+                  
+          if self.basis_set==1:#For Legendre Polynomials
+               '''Since Legendre polynomials can be used only from -1 to 1,
+               the period is automatically set as [-1,1].'''
+               x=np.linspace(-1,1,self.x_points)
+               y=self.function(x)
+               self.legendre_coeffs(y,x)
+               #print(self.coeff)
+               #new_coeff=self.legendre_hamiltonian_coeffs(self.coeff)
+               #self.coeff=new_coeff
+          elif self.basis_set==2:#For Fourier
+               x=np.linspace(0,self.period,self.x_points)
+               y=self.function(x)
+               self.coeff=np.array([self.f_coeffs(y,x,i) for i in np.arange(0,self.basis_size)])
+          else:
+               print ("The basis set choice should be either 1 for Lagendre Polynomial or 2 for Fourier ")
+               raise ValueError

@@ -18,7 +18,7 @@ from click.testing import CliRunner
 
 from SEquation import SEquation
 from SEquation import cli
-
+from unittest.mock import MagicMock
 
 
 class TestSequation(unittest.TestCase):
@@ -83,3 +83,21 @@ class TestSequation(unittest.TestCase):
         for i in range(0,self.S.basis_size+1):
             #print(self.S.coeff[i],new_coeff[i])
             self.assertAlmostEqual(self.S.coeff[i],new_coeff[i],0,3)#The coefficients of coeff and new_coeff should match
+
+    def test_coefficient_calculator_selection(self):
+        #Checks if error is raised for invalid argument for function basis_set_selection
+        self.basis_set=0
+        self.assertRaises(ValueError,self.S.coefficient_calculator_selection)
+        '''With a mock checks if the functions legendre_coeffs and legendre_hamiltonian_coeffs are called
+        by function basis_set_selection when basis_set=1'''
+        self.S.basis_set=1
+        #self.S.legendre_coeffs=MagicMock()
+        self.S.coefficient_calculator_selection()
+        self.assertGreater(len(self.S.coeff),0)
+
+        '''
+        self.S.legendre_hamiltonian_coeffs=MagicMock()
+        self.S.basis_set_selection()
+        x=np.linspace(-1,1,self.S.x_points)
+        self.S.function(x)
+        self.S.legendre_coeffs.assert_called_once_with(self.S.function,x)'''
