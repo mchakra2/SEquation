@@ -16,8 +16,8 @@ class Schrodinger:
      function=staticmethod(lambda x: np.sin(x)+np.cos(x))
      x_points=200#Number of x points spanning the period
 
-     def main():
-            self.parameters(self.input_f)
+     '''def main():
+            self.parameters(self.input_f)'''
      
      #Reads the input file and assigns the parameter values
      def parameters(self,in_file):
@@ -73,12 +73,13 @@ class Schrodinger:
                y=self.function(x)
                self.legendre_coeffs(y,x)
                #print(self.coeff)
-               #new_coeff=self.legendre_hamiltonian_coeffs(self.coeff)
-               #self.coeff=new_coeff
+               new_coeff=self.legendre_hamiltonian_coeffs(self.coeff)
+               self.coeff=new_coeff
           elif self.basis_set==2:#For Fourier
                x=np.linspace(0,self.period,self.x_points)
                y=self.function(x)
                self.coeff=np.array([self.f_coeffs(y,x,i) for i in np.arange(0,self.basis_size)])
+
           else:
                print ("The basis set choice should be either 1 for Lagendre Polynomial or 2 for Fourier ")
                raise ValueError
