@@ -84,18 +84,77 @@ class TestSequation(unittest.TestCase):
             #print(self.S.coeff[i],new_coeff[i])
             self.assertAlmostEqual(self.S.coeff[i],new_coeff[i],0,3)#The coefficients of coeff and new_coeff should match
 
-    def test_coefficient_calculator_selection(self):
+    
+    def test_fourier_hamiltonian_coeffs(self):
+        '''Checks if the modified coefficients after applying hamiltonian agree
+        to those calculated manually'''
+        self.S.period=2
+        self.S.basis_size=4
+        self.S.coeff=np.array([1,1,1,1])#Assigning some random coefficient
+        new_coeff=self.S.fourier_hamiltonian_coeffs(self.S.coeff)
+        for i in range(self.S.basis_size):
+            check_coefficient=((self.S.c*(2*np.pi*i/self.S.period)**2)+self.S.stat_potential)*self.S.coeff[i]
+            self.assertEqual(check_coefficient,new_coeff[i])
+
+    def test_initial_coefficient(self):
         #Checks if error is raised for invalid argument for function basis_set_selection
-        self.basis_set=0
-        self.assertRaises(ValueError,self.S.coefficient_calculator_selection)
+        self.S.basis_set=0
+        self.assertRaises(ValueError,self.S.initial_coefficient)
         '''With basis_set=1, we check if the size of the coefficient array is same as that which we would expect
         while using legendre polynomials as basis set, i.e. basis_size+1'''
         self.S.basis_set=1
-        self.S.coefficient_calculator_selection()
+        self.S.initial_coefficient()
         self.assertEqual(len(self.S.coeff),self.S.basis_size+1)
         '''With basis_set=2, we check if the size of the coefficient array is same as that which we would expect
         while using Fourier series as basis set'''
         self.S.basis_set=2
-        self.S.coefficient_calculator_selection()
+        self.S.initial_coefficient()
         self.assertEqual(len(self.S.coeff),self.S.basis_size)
+
+    
         
+    def test_hamiltonian_coefficient_raises_error(self):
+        #Checks if error is raised for invalid argument for function basis_set_selection
+        self.S.basis_set=0
+        self.S.basis_size=3
+        initial_coefficients=np.ones(self.S.basis_size)
+        self.assertRaises(ValueError,self.S.hamiltonian_coefficient,initial_coefficients)
+
+
+    def test_calculate_energy(self):
+        self.S.basis_size=2
+        self.S.period=2
+        '''Checks if energy returned for fourier series basis set equals
+        the energy manually calculated with the given parameters'''
+        self.S.basis_set=2
+        self.S.coeff=np.ones(self.S.basis_size)
+        self.assertEqual(self.S.calculate_energy(),6+np.pi**2)
+        '''Checks if energy returned for legendre basis set equals
+        the energy that we expect with the given parameters'''
+        self.S.basis_set=1
+        self.S.coeff=np.ones(self.S.basis_size+1)
+        result=self.S.legendre_hamiltonian_coeffs(self.S.coeff)
+        self.assertEqual(self.S.calculate_energy(),result.sum())
+
+
+class Test_with_mocks(unittest.TestCase):
+    def setUp(self):
+        self.mocks=SEquation.Schrodinger()
+
+    def test_mock_hamiltonian_coefficient(self):
+        '''This function checks whether hamiltonian_coefficient 
+        calls appropriate function based on basis set choice'''
+        self.mocks.basis_set=1
+        self.mocks.basis_size=3
+        #With basis_set=1, we check if function legendre_hamiltonian_coeffs is called using mock
+        check_coefficients=np.ones(self.mocks.basis_size+1)
+        self.mocks.legendre_hamiltonian_coeffs=MagicMock()
+        self.mocks.hamiltonian_coefficient(check_coefficients)
+        self.mocks.legendre_hamiltonian_coeffs.assert_called_once_with(check_coefficients)
+        
+        #With basis_set=2, we check if function fourier_hamiltonian_coeffs is called using mock
+        initial_coefficients=np.ones(self.mocks.basis_size)
+        self.mocks.basis_set=2
+        self.mocks.fourier_hamiltonian_coeffs=MagicMock()
+        self.mocks.hamiltonian_coefficient(initial_coefficients)
+        self.mocks.fourier_hamiltonian_coeffs.assert_called_once_with(initial_coefficients)
