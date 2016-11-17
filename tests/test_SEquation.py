@@ -128,13 +128,17 @@ class TestSequation(unittest.TestCase):
         the energy manually calculated with the given parameters'''
         self.S.basis_set=2
         self.S.coeff=np.ones(self.S.basis_size)
-        self.assertEqual(self.S.calculate_energy(),6+np.pi**2)
+        normalization_factor=self.S.basis_size
+        '''The normalization factor is <psi|psi>, since all chosen coefficients are 1 and real,
+        the inner product will be sum of |coefficient|^2 '''
+        self.assertEqual(self.S.calculate_energy(),(6+np.pi**2)/normalization_factor)
         '''Checks if energy returned for legendre basis set equals
         the energy that we expect with the given parameters'''
         self.S.basis_set=1
         self.S.coeff=np.ones(self.S.basis_size+1)
+        normalization_factor=self.S.basis_size+1
         result=self.S.legendre_hamiltonian_coeffs(self.S.coeff)
-        self.assertEqual(self.S.calculate_energy(),result.sum())
+        self.assertEqual(self.S.calculate_energy(),result.sum()/normalization_factor)
 
 
 class Test_with_mocks(unittest.TestCase):

@@ -124,5 +124,11 @@ class Schrodinger:
      def calculate_energy(self):
           ''' The function calculates energy'''
           new_coeff=self.hamiltonian_coefficient(self.coeff)
-          energy=np.dot(self.coeff,new_coeff)
+          energy=np.dot(np.conj(self.coeff),new_coeff)/np.dot(np.conj(self.coeff),self.coeff)
+          #We normalize <psi|H|psi> by dividing it with <psi|psi>
           return(energy)
+
+     '''def apply_variational_principle():
+          This function applies the variational principle to get to the minimum energy.
+          In this function the energy is minimized with respect to each basis set coefficient
+          by gradient descent. '''

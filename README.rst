@@ -28,7 +28,15 @@ Solving Schrodinger Equation
 Features
 --------
 
-* TODO
+* parameters: function to read from the input file
+* legendre_coeff: function to calculate the basis set coefficients of as wave function when legendre polynomials of degree=basis set size are the basis set functions
+* legendre_hamiltonian_coeffs: function which takes in the initial coefficient array and returns the modified coefficients after H psi operation
+* f_coeffs: calculates the basis set coefficients for fourier series basis set
+* fourier_hamiltonian_coeffs: function to take in the initial coefficient array and returns the modified coefficients after H psi operation
+* initial_coefficient: function to call the appropriate coefficient calculator fuction based on the basis set choice
+* hamiltonian_coefficient: function to call the appropriate hamiltonian coefficient calculator fuction based on the basis set choice
+* calculate_energy: function to calculate the energy which is equal to <psi|H|psi>/<psi|psi>
+
 
 Credits
 ---------
