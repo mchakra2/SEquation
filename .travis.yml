@@ -7,8 +7,6 @@ python: 3.5
 env:
   - TOXENV=py35
   - TOXENV=py34
-  - TOXENV=py33
-  - TOXENV=py27
 
 
 
@@ -16,6 +14,7 @@ env:
 install:
 - pip install -U tox
 - pip install coveralls
+- pip install SEquation
 # command to run tests, e.g. python setup.py test
 script:
 - tox -e ${TOXENV}
@@ -32,4 +31,4 @@ deploy:
   on:
     tags: true
     repo: mchakra2/SEquation
-    condition: $TOXENV == py27
+    condition: $TOXENV == py35
