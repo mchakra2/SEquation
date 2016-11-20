@@ -18,10 +18,21 @@ class Schrodinger:
      o_file="./IOFiles/output.txt"
      #Predefined function
      function=staticmethod(lambda x: x**2+np.sin(x))
-     x_points=200#Number of x points spanning the period
+     x_points=200#Number of x points spanning the period or domain
 
-     '''def main():
-            self.parameters(self.input_f)'''
+     def main(self):
+          self.parameters(self.input_f)
+          self.initial_coefficient()
+          f=open(self.o_file,"w")#Writing into output file
+          f.write("For the first version of the project:\n The function used is psi= x^2+sin(x).\n The basis set coefficients are:%s\n"%self.coeff)
+          hcoeffs=self.hamiltonian_coefficient(self.coeff)
+          f.write("Modified coefficients after evaluating the Hamiltonian operator on the given wavefunction:\n %s\n"%hcoeffs)
+          self.apply_variational_principle()
+          f.write("The final set of coefficients corresponding to minimum energy:\n %s\n"%self.coeff)
+          f.close()
+
+          
+          
      
      #Reads the input file and assigns the parameter values
      def parameters(self,in_file):
@@ -95,9 +106,7 @@ class Schrodinger:
                x=np.linspace(-1,1,self.x_points)
                y=self.function(x)
                self.legendre_coeffs(y,x)
-               #print(self.coeff)
-               # new_coeff=self.legendre_hamiltonian_coeffs(self.coeff)
-               #self.coeff=new_coeff
+
           elif self.basis_set==2:#For Fourier
                x=np.linspace(0,self.period,self.x_points)
                y=self.function(x)
@@ -132,19 +141,73 @@ class Schrodinger:
           #We normalize <psi|H|psi> by dividing it with <psi|psi>
           return(energy)
 
-     def apply_variational_principle():
+     def increase_coefficient(self,coeff_array,i):
+          '''This function takes in the coefficient array and an index value. 
+          The element of the array at the given index is increased. If energy with 
+          the new coefficients is less than that using the original coefficients, the function
+          returns 1.'''
+          initial_energy=self.calculate_energy(coeff_array)
+
+          coeff_array[i]+=self.change*coeff_array[i]
+          final_energy=self.calculate_energy(coeff_array)
+
+          if final_energy<initial_energy:
+               return(1)
+          return(0)
+
+     def decrease_coefficient(self,coeff_array,i):
+          '''This function takes in the coefficient array and an index value. 
+          The element of the array at the given index is decreased by change*value of itself. If energy with 
+          the new coefficients is less than that using the original coefficients, the function
+          returns 1.'''
+          initial_energy=self.calculate_energy(coeff_array)
+          #print(initial_energy,coeff_array)
+          coeff_array[i]-=self.change*coeff_array[i]
+          final_energy=self.calculate_energy(coeff_array)
+          #print(final_energy,coeff_array)
+          if final_energy<initial_energy:
+               return(1)
+          return(0)
+               
+
+     def apply_variational_principle(self):
           '''This function applies the variational principle to get to the minimum energy.
-          In this function the energy is minimized with respect to each basis set coefficient. '''
+          In this function the energy is minimized with respect to each basis set coefficient.
+          The check_energy variable saves the energy before every change in the coefficients.'''
           iteration=0
-          convergence=0
-          
-          while iteration<=10000 and convergence!=1:
-               check_coefficients=deepcopy(self.coeff)
+          self.convergence=0
+          self.coeff.astype(float)
+          while iteration<=100000 and self.convergence!=1:
+               add_call=0#Keeps track of the number of times increase_coefficient is called
+               subtract_call=0#Keeps track of the number of times decrease_coefficient is called
                for i in range(0,len(self.coeff)):
-                    if self.increase_coeff(self.coeff)==1:
+                  
+                    if self.increase_coefficient(deepcopy(self.coeff),i)==1:
+ 
+                         check_energy=self.calculate_energy(self.coeff)
+
                          self.coeff[i]+=self.change*self.coeff[i]
-                    elif self.decrease_coeff(self.coeff)==1:
+                         add_call+=1
+                    elif self.decrease_coefficient(deepcopy(self.coeff),i)==1:
+  
+                         check_energy=self.calculate_energy(self.coeff)
                          self.coeff[i]-=self.change*self.coeff[i]
-               if check_coefficients==self.coeff:
-                    convergence=1
+                         subtract_call+=1
+
+                    '''difference=self.calculate_energy(self.coeff)-check_energy
+                    if difference>0:
+                         print(i,self.coeff)
+                         print(check_energy)
+                         print(self.calculate_energy(self.coeff))
+                         raise ValueError'''
+               
+               if add_call==0 and subtract_call==0:
+                    self.convergence=1
+               #print(iteration)
                iteration+=1
+
+          '''The returned value should be less than 0 as the final coeff array should correspond to the
+          lowest energy'''
+          return(self.calculate_energy(self.coeff)-check_energy)
+      
+          

@@ -140,6 +140,66 @@ class TestSequation(unittest.TestCase):
         result=self.S.legendre_hamiltonian_coeffs(coeff)
         self.assertEqual(self.S.calculate_energy(coeff),result.sum()/normalization_factor)
 
+    def test_increase_coefficient(self):
+        '''To test if the increase_coefficient function is working, we take specific cases where
+        we know if energy will increase or decrease, and then check if the return value of the function
+        matches our expectation'''
+        self.S.basis_set=1
+        self.S.change=0.03
+        self.S.coeff=np.array([1.0,1.0,1.0])
+        '''with the above set of initial coefficient and change, the modified 
+        energy (1.99), as verified by manual calculation, is lower than the actual energy (2).
+        Hence, the function is expected to return 1'''
+        result=self.S.increase_coefficient(self.S.coeff,2)
+        self.assertEqual(result,1)
+        self.S.change=-0.03
+        self.S.coeff=np.array([1.0,1.0,1.0])
+        '''with the above set of initial coefficient and change, the modified 
+        energy (2.01), as verified by manual calculation, is higher than the actual energy (2).
+        Hence, the function is expected to return 0'''
+        result=self.S.increase_coefficient(self.S.coeff,2)
+        self.assertEqual(result,0)
+
+    def test_decrease_coefficient(self):
+        '''To test if the decrease_coefficient function is working, we take specific cases where
+        we know if energy will increase or decrease, and then check if the return value of the function
+        matches our expectation'''
+        self.S.basis_set=1
+        self.S.change=0.03
+        self.S.coeff=np.array([1.0,1.0,2.0])
+        '''with the above set of initial coefficient and change, the modified 
+        energy (1.99), as verified by manual calculation, is lower than the actual energy (2).
+        Hence, the function is expected to return 1'''
+        result=self.S.decrease_coefficient(self.S.coeff,2)
+        self.assertEqual(result,1)
+        self.S.coeff=np.array([1.0,1.0,1.0])
+        '''with the above set of initial coefficient and change, the modified 
+        energy (2.01), as verified by manual calculation, is higher than the actual energy (2).
+        Hence, the function is expected to return 0'''
+        result=self.S.decrease_coefficient(self.S.coeff,2)
+        self.assertEqual(result,0)
+
+    def test_apply_variational_principle(self):
+        '''This function checks whether the final coefficients correspond to the lowest energy'''
+        self.S.basis_set=1
+        self.S.basis_size=3
+        #With basis_set=1
+        self.S.coeff=np.ones(self.S.basis_size+1)
+        result1=self.S.apply_variational_principle()
+        self.assertLess(result1,0)
+        #With basis_set=2
+        self.S.coeff=np.ones(self.S.basis_size)
+        self.S.basis_set=2
+        result2=self.S.apply_variational_principle()
+        self.assertLess(result2,0)
+
+    def test_main(self):
+        '''To check whether the main function provides a non empty output file'''
+        self.S.main()
+        file_exists = os.path.exists(self.S.o_file)
+        self.assertTrue(file_exists)
+        non_empty=os.path.getsize(self.S.o_file)
+        self.assertGreater(non_empty,0)
 
 class Test_with_mocks(unittest.TestCase):
     def setUp(self):
@@ -162,3 +222,5 @@ class Test_with_mocks(unittest.TestCase):
         self.mocks.fourier_hamiltonian_coeffs=MagicMock()
         self.mocks.hamiltonian_coefficient(initial_coefficients)
         self.mocks.fourier_hamiltonian_coeffs.assert_called_once_with(initial_coefficients)
+
+
