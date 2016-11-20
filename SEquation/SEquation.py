@@ -51,6 +51,9 @@ class Schrodinger:
                 elif line.split("=")[0]=='size':
                     self.basis_size=int(line.split("=")[1])
 
+                elif line.split("=")[0]=='domain':
+                    self.period=float(line.split("=")[1])          
+
                 elif line.split("=")[0]=='Pot_file':
                     self.Pot_file=line.split("=")[1].rstrip()
 
