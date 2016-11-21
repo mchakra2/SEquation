@@ -4,7 +4,9 @@ c=1
 basis_set=1
 #basis set size. It should be positive integer
 size=20
-#Path name for the potential energy file (Pot_file)
-Pot_file=./IOFiles/Pot_Example.txt
+#Potential energy (Vo)
+potential_energy=2
 #Preferred path name of the output file (o_file)
 o_file=./IOFiles/output.txt
+#domain or the period
+domain=2

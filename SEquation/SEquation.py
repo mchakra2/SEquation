@@ -43,7 +43,7 @@ class Schrodinger:
         
         for line in f:
 
-            if "=" in line:
+            if "=" in line and (not line.startswith( '#' )):
                 if line.split("=")[0]=='c':
                     self.c=int(line.split("=")[1])
                 elif line.split("=")[0]=='basis_set':
@@ -54,8 +54,8 @@ class Schrodinger:
                 elif line.split("=")[0]=='domain':
                     self.period=float(line.split("=")[1])          
 
-                elif line.split("=")[0]=='Pot_file':
-                    self.Pot_file=line.split("=")[1].rstrip()
+                elif line.split("=")[0]=='potential_energy':
+                    self.stat_potential=float(line.split("=")[1])
 
                 elif line.split("=")[0]=='o_file':
                     self.o_file=line.split("=")[1].rstrip()
@@ -164,10 +164,10 @@ class Schrodinger:
           the new coefficients is less than that using the original coefficients, the function
           returns 1.'''
           initial_energy=self.calculate_energy(coeff_array)
-          #print(initial_energy,coeff_array)
+          
           coeff_array[i]-=self.change*coeff_array[i]
           final_energy=self.calculate_energy(coeff_array)
-          #print(final_energy,coeff_array)
+          
           if final_energy<initial_energy:
                return(1)
           return(0)
@@ -197,13 +197,8 @@ class Schrodinger:
                          self.coeff[i]-=self.change*self.coeff[i]
                          subtract_call+=1
 
-                    '''difference=self.calculate_energy(self.coeff)-check_energy
-                    if difference>0:
-                         print(i,self.coeff)
-                         print(check_energy)
-                         print(self.calculate_energy(self.coeff))
-                         raise ValueError'''
-               
+               '''When either increasing or decreasing coefficients values increases energy, 
+               we say that we have found the coefficients that give us lowest energy'''
                if add_call==0 and subtract_call==0:
                     self.convergence=1
                #print(iteration)
